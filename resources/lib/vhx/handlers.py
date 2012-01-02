@@ -1,7 +1,8 @@
+from contextlib import contextmanager
 import re
 import xbmcgui
 from .common import *
-from .scraper import VhxScraper
+from .scraper import VhxScraper, AuthenticationError
 
 def main_handler(x, **params):
 
@@ -33,9 +34,27 @@ def main_handler(x, **params):
     )
     x.addDirectoryItem(item, '/tumblr', isFolder=True)
     
-def combined_handler(x, **params):
+
+def scrape(listing):
+    videos = None
+    while videos is None:
+        vhx = VhxScraper.from_config()
+        try:
+            videos = getattr(vhx, listing)()
+        except AuthenticationError, e:
+            jump_to_settings = xbmcgui.Dialog().yesno("Authentication Error",
+                str(e), "Update settings?")
+            if jump_to_settings:
+                addon.openSettings()
+            else:
+                videos = []
+    return videos
+    
+
+def listing_handler(x, listing, **params):
     total = 0
-    for video in VhxScraper.from_config().all():
+    videos = scrape(listing)
+    for video in videos:
         item = xbmcgui.ListItem(
             label=video.title, 
             label2=video.description, 
@@ -44,43 +63,18 @@ def combined_handler(x, **params):
         )
         total += 1
         x.addDirectoryItem(item, video.url, totalItems=total)
+        
+def combined_handler(x, **params):
+    listing_handler(x, 'all', **params)
 
 def facebook_handler(x, **params):
-    total = 0
-    for video in VhxScraper.from_config().facebook():
-        item = xbmcgui.ListItem(
-            label=video.title, 
-            label2=video.description, 
-            iconImage=video.thumbnail_url, 
-            thumbnailImage=video.thumbnail_url
-        )
-        total += 1
-        x.addDirectoryItem(item, video.url, totalItems=total)
+    listing_handler(x, 'facebook', **params)
 
 def twitter_handler(x, **params):
-    total = 0
-    for video in VhxScraper.from_config().twitter():
-        item = xbmcgui.ListItem(
-            label=video.title, 
-            label2=video.description, 
-            iconImage=video.thumbnail_url, 
-            thumbnailImage=video.thumbnail_url
-        )
-        total += 1
-        x.addDirectoryItem(item, video.url, totalItems=total)
+    listing_handler(x, 'twitter', **params)
 
 def tumblr_handler(x, **params):
-    total = 0
-    for video in VhxScraper.from_config().tumblr():
-        item = xbmcgui.ListItem(
-            label=video.title, 
-            label2=video.description, 
-            iconImage=video.thumbnail_url, 
-            thumbnailImage=video.thumbnail_url
-        )
-        total += 1
-        x.addDirectoryItem(item, video.url, totalItems=total)
-
+    listing_handler(x, 'tumblr', **params)
 
 handlers = [
     (re.compile('/combined'), combined_handler),

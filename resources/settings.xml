@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <!-- GENERAL -->
+    <category label="$LOCALIZE[128]">
+		<!-- login -->
+        <setting label="40000" id="login" type="text" />
+
+		<!-- api_token -->
+        <setting label="40001" id="api_token" type="text" />
+    </category>
+</settings>

@@ -9,7 +9,7 @@ class VhxScraper(object):
     
     @classmethod
     def from_config(cls):
-        return cls(config['login'], config['api_token'])
+        return cls(addon.getSetting('login'), addon.getSetting('api_token'))
     
     def __init__(self, login, api_token):
         self.login = login
@@ -25,6 +25,11 @@ class VhxScraper(object):
                                        query_string)
         log.debug("GET {0}".format(url))
         response = requests.get(url, timeout=2.0)
+        if response.status_code == 404:
+            return []
+        elif response.status_code == 401:
+            raise AuthenticationError("Invalid credentials: {0}/{1}".format(self.login, self.api_token))
+        
         response.raise_for_status()
         try:
             videos = json.loads(response.content)
@@ -54,22 +59,9 @@ class VhxScraper(object):
     
     def all(self):
         videos = []
-        
-        try:
-            videos.extend(self.facebook())
-        except requests.exceptions.HTTPError:
-            pass
-        
-        try:
-            videos.extend(self.twitter())
-        except requests.exceptions.HTTPError:
-            pass
-        
-        try:
-            videos.extend(self.tumblr())
-        except requests.exceptions.HTTPError:
-            pass
-        
+        videos.extend(self.facebook())
+        videos.extend(self.twitter())
+        videos.extend(self.tumblr())
         videos.sort(key=lambda v: v.created_at, reverse=True)
         return videos
 

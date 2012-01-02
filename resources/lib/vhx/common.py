@@ -4,7 +4,6 @@ from resources.lib import requests
 from xbmcaddon import Addon
 
 log = logging.getLogger('xbmc.vhx')
-config = {}
 plugin_id = 'plugin.video.vhx'
 addon = Addon(plugin_id)
 root_dir = addon.getAddonInfo("path")

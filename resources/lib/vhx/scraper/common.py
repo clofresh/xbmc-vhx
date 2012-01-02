@@ -7,7 +7,7 @@ from datetime import datetime
 class ParseError(Exception):    pass
 class UnknownFormat(Exception): pass
 class UnknownUrl(Exception):    pass
-
+class AuthenticationError(Exception): pass
 
 class VhxVideo(object):
     valid_videos = []
