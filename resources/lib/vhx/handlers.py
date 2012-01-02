@@ -4,36 +4,28 @@ import xbmcgui
 from .common import *
 from .scraper import VhxScraper, AuthenticationError
 
-def main_handler(x, **params):
-
-    item = xbmcgui.ListItem(
-        label='All videos', 
-        iconImage=base_path("icon.png"), 
-        thumbnailImage=base_path("icon.png")
-    )
-    x.addDirectoryItem(item, '/combined', isFolder=True)
-    
-    item = xbmcgui.ListItem(
-        label='Facebook videos', 
-        iconImage=media_path("facebook.png"), 
-        thumbnailImage=media_path("facebook.png")
-    )
-    x.addDirectoryItem(item, '/facebook', isFolder=True)
-
-    item = xbmcgui.ListItem(
-        label='Twitter videos', 
-        iconImage=media_path("twitter.png"), 
-        thumbnailImage=media_path("twitter.png")
-    )
-    x.addDirectoryItem(item, '/twitter', isFolder=True)
-
-    item = xbmcgui.ListItem(
-        label='Tumblr videos', 
-        iconImage=media_path("tumblr.png"), 
-        thumbnailImage=media_path("tumblr.png")
-    )
-    x.addDirectoryItem(item, '/tumblr', isFolder=True)
-    
+listings = [
+    ('all', {
+        'label':            'All videos',
+        'iconImage':        base_path('icon.png'),
+        'thumbnailImage':   base_path('icon.png'),
+    }), 
+    ('facebook', {
+        'label':            'Facebook videos',
+        'iconImage':        media_path('facebook.png'),
+        'thumbnailImage':   media_path('facebook.png'),
+    }), 
+    ('twitter', {
+        'label':            'Twitter videos',
+        'iconImage':        media_path('twitter.png'),
+        'thumbnailImage':   media_path('twitter.png'),
+    }), 
+    ('tumblr', {
+        'label':            'Tumblr videos',
+        'iconImage':        media_path('tumblr.png'),
+        'thumbnailImage':   media_path('tumblr.png'),
+    }),
+]
 
 def scrape(listing):
     videos = None
@@ -50,6 +42,10 @@ def scrape(listing):
                 videos = []
     return videos
     
+def main_handler(x, **params):
+    for listing, attributes in listings:
+        x.addDirectoryItem(xbmcgui.ListItem(**attributes), 
+            '/{0}'.format(listing), isFolder=True)    
 
 def listing_handler(x, listing, **params):
     total = 0
@@ -64,23 +60,10 @@ def listing_handler(x, listing, **params):
         total += 1
         x.addDirectoryItem(item, video.url, totalItems=total)
         
-def combined_handler(x, **params):
-    listing_handler(x, 'all', **params)
-
-def facebook_handler(x, **params):
-    listing_handler(x, 'facebook', **params)
-
-def twitter_handler(x, **params):
-    listing_handler(x, 'twitter', **params)
-
-def tumblr_handler(x, **params):
-    listing_handler(x, 'tumblr', **params)
 
 handlers = [
-    (re.compile('/combined'), combined_handler),
-    (re.compile('/facebook'), facebook_handler),
-    (re.compile('/twitter'),  twitter_handler),
-    (re.compile('/tumblr'),   tumblr_handler),
+    (re.compile('/(?P<listing>{0})'.format('|'.join(l for l, _ in listings))), 
+        listing_handler),
 ]
 
 default_handler = main_handler

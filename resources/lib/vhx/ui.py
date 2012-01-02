@@ -51,7 +51,9 @@ class VhxPlugin(object):
                 match = pattern.match(self.path)
                 if match:
                     log.info("{0} {1}".format(self.path, handler))
-                    handler(x, **self.params)
+                    params = match.groupdict()
+                    params.update(self.params)
+                    handler(x, **params)
                     handled = True
         
             if not handled:
