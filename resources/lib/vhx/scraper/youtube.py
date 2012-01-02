@@ -118,6 +118,12 @@ class YouTubeVideo(object):
         videos.sort()
         _codec, _container, url = videos[0]
         return url
+    
+    @property
+    def video_url(self):
+        ''' To satisfy the common interface
+        '''
+        return self.highest_res()
 
 def getVideoUrlMap(pl_obj, video = {}):
     """ Borrowed from http://code.google.com/p/youtubexbmc/

@@ -10,29 +10,25 @@ listings = [
         'iconImage':        base_path('icon.png'),
         'thumbnailImage':   base_path('icon.png'),
     }), 
-    ('facebook', {
-        'label':            'Facebook videos',
-        'iconImage':        media_path('facebook.png'),
-        'thumbnailImage':   media_path('facebook.png'),
-    }), 
-    ('twitter', {
-        'label':            'Twitter videos',
-        'iconImage':        media_path('twitter.png'),
-        'thumbnailImage':   media_path('twitter.png'),
-    }), 
-    ('tumblr', {
-        'label':            'Tumblr videos',
-        'iconImage':        media_path('tumblr.png'),
-        'thumbnailImage':   media_path('tumblr.png'),
-    }),
 ]
+
+for channel, label in VhxScraper.channels:
+    icon_path = media_path('{0}.png'.format(channel))
+    listings.append((channel, {
+        'label':            label,
+        'iconImage':        icon_path,
+        'thumbnailImage':   icon_path,
+    }))
 
 def scrape(listing):
     videos = None
     while videos is None:
         vhx = VhxScraper.from_config()
         try:
-            videos = getattr(vhx, listing)()
+            if listing == 'all':
+                videos = vhx.all()
+            else:
+                videos = vhx.request(listing)
         except AuthenticationError, e:
             jump_to_settings = xbmcgui.Dialog().yesno("Authentication Error",
                 str(e), "Update settings?")

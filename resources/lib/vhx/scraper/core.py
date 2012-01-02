@@ -6,6 +6,20 @@ __all__ = ['VhxScraper']
 
 class VhxScraper(object):
     base_url = "http://api.vhx.tv"
+
+    channels = [
+        ('boingboing',      'BoingBoing'), 
+        ('buzzfeed',        'BuzzFeed'),
+        ('devour',          'Devour'), 
+        ('facebook',        'Facebook'), 
+        ('laughingsquid',   'Laughing Squid'), 
+        ('trailers',        'Movie trailers'), 
+        ('reddit',          'Reddit'),
+        ('tumblr',          'Tumblr'), 
+        ('twitter',         'Twitter'), 
+        ('community',       'VHX community'), 
+        ('staff',           'VHX staff'), 
+    ]
     
     @classmethod
     def from_config(cls):
@@ -48,20 +62,10 @@ class VhxScraper(object):
         vhx_videos.sort(key=lambda v: v.created_at, reverse=True)
         return vhx_videos
     
-    def facebook(self):
-        return self.request('facebook')
-    
-    def twitter(self):
-        return self.request('twitter')
-
-    def tumblr(self):
-        return self.request('tumblr')
-    
     def all(self):
         videos = []
-        videos.extend(self.facebook())
-        videos.extend(self.twitter())
-        videos.extend(self.tumblr())
+        for channel, _label in self.channels:
+            videos.extend(self.request(channel))
         videos.sort(key=lambda v: v.created_at, reverse=True)
         return videos
 

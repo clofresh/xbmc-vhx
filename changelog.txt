@@ -1,0 +1,2 @@
+2012-01-01 - v1.0.0 (clofresh)
+- VHX.tv support for YouTube videos from Facebook, Twitter, Tumblr, Reddit, Boing Boing, Laughing Squid, Devour, Buzzfeed, VHX staff and community and movie trailers.

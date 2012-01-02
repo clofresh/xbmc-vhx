@@ -40,7 +40,7 @@ class VhxVideo(object):
         log.info("Possible video urls: {0}".format(cls.valid_videos))
         for video_cls in cls.valid_videos:
             if video_cls.matched(url):
-                return video_cls.from_url(url).highest_res()
+                return video_cls.from_url(url).video_url
         raise UnknownUrl(url)
 
     
