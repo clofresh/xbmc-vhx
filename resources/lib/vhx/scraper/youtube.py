@@ -122,93 +122,93 @@ class YouTubeVideo(object):
 def getVideoUrlMap(pl_obj, video = {}):
     """ Borrowed from http://code.google.com/p/youtubexbmc/
     """
-	links = {}
-	video["url_map"] = "true"
-				
-	html = ""
-	if pl_obj["args"].has_key("fmt_stream_map"):
-		html = pl_obj["args"]["fmt_stream_map"]
+    links = {}
+    video["url_map"] = "true"
+                
+    html = ""
+    if pl_obj["args"].has_key("fmt_stream_map"):
+        html = pl_obj["args"]["fmt_stream_map"]
 
-	if len(html) == 0 and pl_obj["args"].has_key("url_encoded_fmt_stream_map"):
-		html = urllib.unquote(pl_obj["args"]["url_encoded_fmt_stream_map"])
+    if len(html) == 0 and pl_obj["args"].has_key("url_encoded_fmt_stream_map"):
+        html = urllib.unquote(pl_obj["args"]["url_encoded_fmt_stream_map"])
 
-	if len(html) == 0 and pl_obj["args"].has_key("fmt_url_map"):
-		html = pl_obj["args"]["fmt_url_map"]
+    if len(html) == 0 and pl_obj["args"].has_key("fmt_url_map"):
+        html = pl_obj["args"]["fmt_url_map"]
 
-	html = urllib.unquote_plus(html)
+    html = urllib.unquote_plus(html)
 
-	if pl_obj["args"].has_key("liveplayback_module"):
-		video["live_play"] = "true"
+    if pl_obj["args"].has_key("liveplayback_module"):
+        video["live_play"] = "true"
 
-	fmt_url_map = [html]
-	if html.find("|") > -1:
-		fmt_url_map = html.split('|')
-	elif html.find(",url=") > -1:
-		fmt_url_map = html.split(',url=')
-	elif html.find("&conn=") > -1:
-		video["stream_map"] = "true"
-		fmt_url_map = html.split('&conn=')
-	
-	
-	if len(fmt_url_map) > 0:
-		for index, fmt_url in enumerate(fmt_url_map):
-			if (len(fmt_url) > 7 and fmt_url.find("&") > 7):
-				quality = "5"
-				final_url = fmt_url.replace(" ", "%20").replace("url=", "")
-				
-				if (final_url.rfind(';') > 0):
-					final_url = final_url[:final_url.rfind(';')]
-				
-				if (final_url.rfind(',') > final_url.rfind('&id=')): 
-					final_url = final_url[:final_url.rfind(',')]
-				elif (final_url.rfind(',') > final_url.rfind('/id/') and final_url.rfind('/id/') > 0):
-					final_url = final_url[:final_url.rfind('/')]
+    fmt_url_map = [html]
+    if html.find("|") > -1:
+        fmt_url_map = html.split('|')
+    elif html.find(",url=") > -1:
+        fmt_url_map = html.split(',url=')
+    elif html.find("&conn=") > -1:
+        video["stream_map"] = "true"
+        fmt_url_map = html.split('&conn=')
+    
+    
+    if len(fmt_url_map) > 0:
+        for index, fmt_url in enumerate(fmt_url_map):
+            if (len(fmt_url) > 7 and fmt_url.find("&") > 7):
+                quality = "5"
+                final_url = fmt_url.replace(" ", "%20").replace("url=", "")
+                
+                if (final_url.rfind(';') > 0):
+                    final_url = final_url[:final_url.rfind(';')]
+                
+                if (final_url.rfind(',') > final_url.rfind('&id=')): 
+                    final_url = final_url[:final_url.rfind(',')]
+                elif (final_url.rfind(',') > final_url.rfind('/id/') and final_url.rfind('/id/') > 0):
+                    final_url = final_url[:final_url.rfind('/')]
 
-				if (final_url.rfind('itag=') > 0):
-					quality = final_url[final_url.rfind('itag=') + 5:]
-					if quality.find('&') > -1:
-						quality = quality[:quality.find('&')]
-					if quality.find(',') > -1:
-						quality = quality[:quality.find(',')]
-				elif (final_url.rfind('/itag/') > 0):
-					quality = final_url[final_url.rfind('/itag/') + 6:]
-				
-				if final_url.find("&type") > 0:
-					final_url = final_url[:final_url.find("&type")]
-				
-				if False: #self.__settings__.getSetting("preferred") == "false":
-					pos = final_url.find("://")
-					fpos = final_url.find("fallback_host")
-					if pos > -1 and fpos > -1:
-						host = final_url[pos + 3:]
-						if host.find("/") > -1:
-							host = host[:host.find("/")]
-						fmt_fallback = final_url[fpos + 14:]
-						if fmt_fallback.find("&") > -1:
-							fmt_fallback = fmt_fallback[:fmt_fallback.find("&")]
+                if (final_url.rfind('itag=') > 0):
+                    quality = final_url[final_url.rfind('itag=') + 5:]
+                    if quality.find('&') > -1:
+                        quality = quality[:quality.find('&')]
+                    if quality.find(',') > -1:
+                        quality = quality[:quality.find(',')]
+                elif (final_url.rfind('/itag/') > 0):
+                    quality = final_url[final_url.rfind('/itag/') + 6:]
+                
+                if final_url.find("&type") > 0:
+                    final_url = final_url[:final_url.find("&type")]
+                
+                if False: #self.__settings__.getSetting("preferred") == "false":
+                    pos = final_url.find("://")
+                    fpos = final_url.find("fallback_host")
+                    if pos > -1 and fpos > -1:
+                        host = final_url[pos + 3:]
+                        if host.find("/") > -1:
+                            host = host[:host.find("/")]
+                        fmt_fallback = final_url[fpos + 14:]
+                        if fmt_fallback.find("&") > -1:
+                            fmt_fallback = fmt_fallback[:fmt_fallback.find("&")]
 
-						final_url = final_url.replace(host, fmt_fallback)
-						final_url = final_url.replace("fallback_host=" + fmt_fallback, "fallback_host=" + host)
+                        final_url = final_url.replace(host, fmt_fallback)
+                        final_url = final_url.replace("fallback_host=" + fmt_fallback, "fallback_host=" + host)
 
-				if final_url.find("rtmp") > -1 and index > 0:
-					if pl_obj.has_key("url") or True:
-						final_url += " swfurl=" + pl_obj["url"] + " swfvfy=1"
+                if final_url.find("rtmp") > -1 and index > 0:
+                    if pl_obj.has_key("url") or True:
+                        final_url += " swfurl=" + pl_obj["url"] + " swfvfy=1"
 
-					playpath = False
-					if final_url.find("stream=") > -1:
-						playpath = final_url[final_url.find("stream=")+7:]
-						if playpath.find("&") > -1:
-							playpath = playpath[:playpath.find("&")]
-					else:
-						playpath = fmt_url_map[index - 1]
+                    playpath = False
+                    if final_url.find("stream=") > -1:
+                        playpath = final_url[final_url.find("stream=")+7:]
+                        if playpath.find("&") > -1:
+                            playpath = playpath[:playpath.find("&")]
+                    else:
+                        playpath = fmt_url_map[index - 1]
 
-					if playpath:
-						if pl_obj["args"].has_key("ptk") and pl_obj["args"].has_key("ptchn"):
-							final_url += " playpath=" + playpath + "?ptchn=" + pl_obj["args"]["ptchn"] + "&ptk=" + pl_obj["args"]["ptk"] 
+                    if playpath:
+                        if pl_obj["args"].has_key("ptk") and pl_obj["args"].has_key("ptchn"):
+                            final_url += " playpath=" + playpath + "?ptchn=" + pl_obj["args"]["ptchn"] + "&ptk=" + pl_obj["args"]["ptk"] 
 
-				links[int(quality)] = final_url.replace('\/','/')
-	
-	return links
-	
-VhxVideo.register(YouTubeVideo)	
+                links[int(quality)] = final_url.replace('\/','/')
+    
+    return links
+    
+VhxVideo.register(YouTubeVideo) 
 
