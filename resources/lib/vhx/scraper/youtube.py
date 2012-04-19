@@ -85,17 +85,16 @@ class YouTubeVideo(object):
     @classmethod
     def from_url(cls, url):
         response = requests.get(url)
-        matched = re.search('yt.setConfig\(({\s*\'PLAYER_CONFIG.*?)\);', response.content, re.DOTALL)
+        matched = re.search('yt.playerConfig = ({[^;]*});', response.content, re.DOTALL)
         if matched:
-            json_str = matched.group(1).replace("'PLAYER_CONFIG'", 
-                                                '"PLAYER_CONFIG"')
+            json_str = matched.group(1)
             try:
                 player_config = json.loads(json_str)
             except Exception:
                 log.error(json_str)
                 raise
             
-            links = getVideoUrlMap(player_config['PLAYER_CONFIG'])
+            links = getVideoUrlMap(player_config)
             video_urls = {}
             for format_id, video_url in links.items():
                 try:
