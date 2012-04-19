@@ -44,7 +44,7 @@ def main_handler(x, **params):
             '/{0}'.format(listing), isFolder=True)    
 
 def listing_handler(x, listing, **params):
-    import xbmc
+    import xbmc, xbmcgui
     playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
     playlist.clear()
     total = 0
