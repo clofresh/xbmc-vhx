@@ -1,6 +1,5 @@
 from contextlib import contextmanager
 import re
-import xbmc, xbmcgui
 from .common import *
 from .scraper import VhxScraper, AuthenticationError
 
@@ -39,11 +38,13 @@ def scrape(listing):
     return videos
     
 def main_handler(x, **params):
+    import xbmcgui
     for listing, attributes in listings:
         x.addDirectoryItem(xbmcgui.ListItem(**attributes), 
             '/{0}'.format(listing), isFolder=True)    
 
 def listing_handler(x, listing, **params):
+    import xbmc
     playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
     playlist.clear()
     total = 0

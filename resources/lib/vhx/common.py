@@ -1,7 +1,15 @@
 import os
 import logging
 from resources.lib import requests
-from xbmcaddon import Addon
+try:
+	from xbmcaddon import Addon
+except ImportError:
+	class Addon(object):
+		def __init__(self, *args):
+			pass
+
+		def getAddonInfo(self, *args):
+			return "../../../"
 
 log = logging.getLogger('xbmc.vhx')
 plugin_id = 'plugin.video.vhx'

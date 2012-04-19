@@ -2,7 +2,6 @@ import re
 import sys
 from functools import partial
 from urlparse import parse_qs, urlparse
-import xbmcgui, xbmcplugin
 
 from .common import *
 
@@ -74,6 +73,7 @@ class Xbmc(object):
         self.handle = handle
     
     def addDirectoryItem(self, listitem, url, **params):
+        import xbmcgui, xbmcplugin
         if not isinstance(listitem, xbmcgui.ListItem):
             listitem = xbmcgui.ListItem(listitem)
         
@@ -85,6 +85,7 @@ class Xbmc(object):
             raise XbmcException()
     
     def __getattr__(self, key):
+        import xbmcplugin
         return partial(getattr(xbmcplugin, key), self.handle)
         
         
